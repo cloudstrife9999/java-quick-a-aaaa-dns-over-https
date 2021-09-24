@@ -6,17 +6,13 @@ public class DNSAdditional extends DNSResourceRecord {
 
     public DNSAdditional(byte[] bytes) {
         this.binaryRepresentation = bytes;
-        this.validateBinaryRepresentation();
+        this.unpack();
     }
 
-    @Override
-    protected byte[] generateRData() {
-        return new byte[]{}; //TODO
-    }
-
-    @Override
-    public void validateBinaryRepresentation() {
-        // TODO Auto-generated method stub
-        
+    public DNSAdditional(byte[] bytes, int offset, boolean hasDomainName) {
+        this.binaryRepresentation = bytes;
+        this.offset = offset;
+        this.hasDomainName = hasDomainName;
+        this.unpack();
     }
 }

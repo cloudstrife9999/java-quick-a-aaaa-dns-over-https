@@ -1,5 +1,7 @@
 package org.cloudstrife9999.dns.header;
 
+import java.util.stream.Stream;
+
 public enum DNSHeaderOpcodeEnum {
     QUERY(0),
     IQUERY(1),
@@ -30,5 +32,9 @@ public enum DNSHeaderOpcodeEnum {
 
     public int getMaskedCode() {
         return (this.code << 3) & 0x78;
+    }
+
+    public static DNSHeaderOpcodeEnum fromCode(int code) {
+        return Stream.of(DNSHeaderOpcodeEnum.values()).filter(elm -> elm.getCode() == code).toList().get(0);
     }
 }

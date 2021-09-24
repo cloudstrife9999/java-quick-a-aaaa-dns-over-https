@@ -1,5 +1,7 @@
 package org.cloudstrife9999.dns.header;
 
+import java.util.stream.Stream;
+
 public enum DNSHeaderQREnum {
     QUERY(0), RESPONSE(1);
 
@@ -15,5 +17,9 @@ public enum DNSHeaderQREnum {
 
     public int getMaskedCode() {
         return (this.code << 7) & 0x80;
+    }
+
+    public static DNSHeaderQREnum fromCode(int code) {
+        return Stream.of(DNSHeaderQREnum.values()).filter(elm -> elm.getCode() == code).toList().get(0);
     }
 }

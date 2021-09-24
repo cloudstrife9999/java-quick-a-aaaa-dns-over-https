@@ -11,18 +11,36 @@ public class DNSQuestion implements DNSMessageElement {
     private DNSQuestionQTypeEnum qType;
     private DNSQuestionQClassEnum qClass;
 
-    public DNSQuestion() {}
+    public DNSQuestion(String domainName, DNSQuestionQTypeEnum qType, DNSQuestionQClassEnum qClass) {
+        this.qName = domainName;
+        this.qType = qType;
+        this.qClass = qClass;
 
-    public DNSQuestion(byte[] bytes) {
-        this.binaryRepresentation = bytes;
-        this.validateBinaryRepresentation();
+        this.updateBinaryRepresentation();
     }
-    
+
+    public String getqName() {
+        return this.qName;
+    }
+
+    public DNSQuestionQTypeEnum getQType() {
+        return this.qType;
+    }
+
+    public DNSQuestionQClassEnum getQClass() {
+        return this.qClass;
+    }
+
+    @Override
+    public void unpack() {
+        // Useless.
+    }
+
     @Override
     public void updateBinaryRepresentation() {
         byte[] qNameBytes = this.generateQnameRepresentation();
 
-        ByteBuffer buffer = ByteBuffer.allocate(qNameBytes.length + 2);
+        ByteBuffer buffer = ByteBuffer.allocate(qNameBytes.length + this.qType.getCodeBytes().length + this.qClass.getCodeBytes().length);
 
         buffer.put(qNameBytes);
         buffer.put(this.qType.getCodeBytes());
@@ -32,16 +50,9 @@ public class DNSQuestion implements DNSMessageElement {
     }
 
     @Override
-    public void validateBinaryRepresentation() {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
     public byte[] getBytes() {
         if (this.binaryRepresentation == null){
             this.updateBinaryRepresentation();
-            this.validateBinaryRepresentation();
         }
         
         if (this.binaryRepresentation != null) {
@@ -56,6 +67,11 @@ public class DNSQuestion implements DNSMessageElement {
         ByteBuffer buffer = ByteBuffer.allocate(this.qName.length() + 2);
 
         for(String token: this.qName.split("\\.")) {
+
+            if(token.length() > 63) {
+                throw new IllegalArgumentException("All the labels that make the domain name must be not longer than 63 characters.");
+            }
+
             buffer.put(this.getTokenWithLengthPrefix(token));
         }
 

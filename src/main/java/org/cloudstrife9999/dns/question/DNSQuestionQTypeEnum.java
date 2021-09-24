@@ -1,39 +1,47 @@
 package org.cloudstrife9999.dns.question;
 
+import java.util.stream.Stream;
+
+import org.cloudstrife9999.dns.Utils;
+
 public enum DNSQuestionQTypeEnum {
-    A((short) 1),
-    NS((short) 2),
-    MD((short) 3),
-    MF((short) 4),
-    CNAME((short) 5),
-    SOA((short) 6),
-    MB((short) 7),
-    MG((short) 8),
-    MR((short) 9),
-    NULL((short) 10),
-    WKS((short) 11),
-    PTR((short) 12),
-    HINFO((short) 13),
-    MINFO((short) 14),
-    MX((short) 15),
-    TXT((short) 16),
-    AAAA((short) 28),
-    AXFR((short) 252),
-    MAILB((short) 253),
-    MAILA((short) 254),
-    STAR((short) 255); // ALL records (*).
+    A(1),
+    NS(2),
+    MD(3),
+    MF(4),
+    CNAME(5),
+    SOA(6),
+    MB(7),
+    MG(8),
+    MR(9),
+    NULL(10),
+    WKS(11),
+    PTR(12),
+    HINFO(13),
+    MINFO(14),
+    MX(15),
+    TXT(16),
+    AAAA(28),
+    AXFR(252),
+    MAILB(253),
+    MAILA(254),
+    STAR(255); // ALL records (*).
 
-    private short code;
+    private int code;
 
-    private DNSQuestionQTypeEnum(short code) {
+    private DNSQuestionQTypeEnum(int code) {
         this.code = code;
     }
 
-    public short getCode() {
+    public int getCode() {
         return this.code;
     }
 
     public byte[] getCodeBytes() {
-        return new byte[]{(byte)((this.code >> 8) & 0xFF), (byte)(this.code & 0xFF)};
+        return Utils.unsignedIntToTwoBytes(this.code);
+    }
+
+    public static DNSQuestionQTypeEnum fromCode(int code) {
+        return Stream.of(DNSQuestionQTypeEnum.values()).filter(elm -> elm.getCode() == code).toList().get(0);
     }
 }

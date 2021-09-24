@@ -1,23 +1,31 @@
 package org.cloudstrife9999.dns.question;
 
+import java.util.stream.Stream;
+
+import org.cloudstrife9999.dns.Utils;
+
 public enum DNSQuestionQClassEnum {
-    IN((short) 1),
-    CS((short) 2),
-    CH((short) 3),
-    HS((short) 4),
-    STAR((short) 255); // ANY class (*).
+    IN(1),
+    CS(2),
+    CH(3),
+    HS(4),
+    STAR(255); // ANY class (*).
 
-    private short code;
+    private int code;
 
-    private DNSQuestionQClassEnum(short code) {
+    private DNSQuestionQClassEnum(int code) {
         this.code = code;
     }
 
-    public short getCode() {
+    public int getCode() {
         return this.code;
     }
 
     public byte[] getCodeBytes() {
-        return new byte[]{(byte)((this.code >> 8) & 0xFF), (byte)(this.code & 0xFF)};
+        return Utils.unsignedIntToTwoBytes(this.code);
+    }
+
+    public static DNSQuestionQClassEnum fromCode(int code) {
+        return Stream.of(DNSQuestionQClassEnum.values()).filter(elm -> elm.getCode() == code).toList().get(0);
     }
 }

@@ -1,5 +1,7 @@
 package org.cloudstrife9999.dns.header;
 
+import java.util.stream.Stream;
+
 public enum DNSHeaderRCodeEnum {
     NO_ERROR(0),
     FORMAT_ERROR(1),
@@ -30,5 +32,9 @@ public enum DNSHeaderRCodeEnum {
 
     public int getMaskedCode() {
         return this.code & 0x0F;
+    }
+
+    public static DNSHeaderRCodeEnum fromCode(int code) {
+        return Stream.of(DNSHeaderRCodeEnum.values()).filter(elm -> elm.getCode() == code).toList().get(0);
     }
 }
