@@ -35,7 +35,7 @@ public class Doh {
 
         connection.setDoOutput(true);
         connection.setRequestMethod("GET");
-        connection.setRequestProperty("User-Agent", "Android");
+        connection.setRequestProperty("User-Agent", "Java Client");
         connection.setRequestProperty("Accept", "application/dns-message");
 
         byte[] responseBytes = new byte[connection.getInputStream().available()];

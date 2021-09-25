@@ -1,24 +1,24 @@
 package org.cloudstrife9999;
 
 import java.io.IOException;
-import java.util.List;
 
-import org.cloudstrife9999.dns.Doh;
+import javax.net.ssl.HttpsURLConnection;
+
+import org.cloudstrife9999.connection.HttpsConnectionWithDoH;
 
 public class Main {
     public static void main(String[] args) {
         try {
-            Doh resolver = new Doh();
-            List<String> responseIPv4 = resolver.resIPv4("www.google.com");
-            List<String> responseIPv6 = resolver.resIPv6("www.google.com");
-            
-            for(String elm : responseIPv4) {
-                System.out.println(elm);
-            }
+            HttpsURLConnection connection = HttpsConnectionWithDoH.connectAfterResolvingViaDoH("www.google.com", "maps", false);
 
-            for(String elm : responseIPv6) {
-                System.out.println(elm);
-            }
+            connection.setDoOutput(true);
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("User-Agent", "Java Client");
+
+            byte[] result = new byte[connection.getInputStream().available()];
+            connection.getInputStream().read(result);
+
+            System.out.println(new String(result));
         }
         catch(IOException e) {
             throw new IllegalArgumentException(e);
