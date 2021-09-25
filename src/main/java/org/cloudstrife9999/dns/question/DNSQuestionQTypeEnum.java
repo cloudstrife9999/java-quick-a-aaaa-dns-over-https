@@ -44,4 +44,12 @@ public enum DNSQuestionQTypeEnum {
     public static DNSQuestionQTypeEnum fromCode(int code) {
         return Stream.of(DNSQuestionQTypeEnum.values()).filter(elm -> elm.getCode() == code).toList().get(0);
     }
+
+    public boolean refersToAnAQuery() {
+        return DNSQuestionQTypeEnum.A.equals(this);
+    }
+
+    public boolean refersToAnAAAAQuery() {
+        return DNSQuestionQTypeEnum.AAAA.equals(this);
+    }
 }

@@ -9,18 +9,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.cloudstrife9999.dns.question.DNSQuestionQClassEnum;
-import org.cloudstrife9999.dns.question.DNSQuestionQTypeEnum;
+import org.cloudstrife9999.dns.record.DNSRRClassEnum;
+import org.cloudstrife9999.dns.record.DNSRRTypeEnum;
 
 public abstract class DNSResourceRecord implements DNSMessageElement {
     protected byte[] binaryRepresentation;
     protected String domainName = null;
-    protected int offset = -1;
+    protected int offset = -1; // 30 bits; unsigned. -1 means that no offset has been specified, because there is no pointer.
     protected boolean hasDomainName;
-    protected DNSQuestionQTypeEnum rDataType; // This should be a different enum.
-    protected DNSQuestionQClassEnum rDataClass; // This should be a different enum.
+    protected DNSRRTypeEnum rDataType;
+    protected DNSRRClassEnum rDataClass;
     protected int ttl; // Must be treated as an unsigned 32-bit integer.
-    protected int rdLength;
+    protected int rdLength; // 2 bytes; unsigned/
     protected byte[] rData;
 
     public String getDomainName() {
@@ -35,11 +35,11 @@ public abstract class DNSResourceRecord implements DNSMessageElement {
         return offset;
     }
 
-    public DNSQuestionQTypeEnum getrDataType() {
+    public DNSRRTypeEnum getrDataType() {
         return this.rDataType;
     }
 
-    public DNSQuestionQClassEnum getrDataClass() {
+    public DNSRRClassEnum getrDataClass() {
         return this.rDataClass;
     }
 
@@ -189,12 +189,12 @@ public abstract class DNSResourceRecord implements DNSMessageElement {
 
     private void unpackRest(int counter){
         int typeCode = Utils.twoBytesToUnsignedInt(new byte[]{(byte)(this.binaryRepresentation[counter] & 0xFF), (byte)(this.binaryRepresentation[counter + 1] & 0xFF)});
-        this.rDataType = DNSQuestionQTypeEnum.fromCode(typeCode); //This should be a different enum.
+        this.rDataType = DNSRRTypeEnum.fromCode(typeCode);
 
         counter += 2; // Skip the type.
 
         int classCode = Utils.twoBytesToUnsignedInt(new byte[]{(byte)(this.binaryRepresentation[counter] & 0xFF), (byte)(this.binaryRepresentation[counter + 1] & 0xFF)});
-        this.rDataClass = DNSQuestionQClassEnum.fromCode(classCode); //This should be a different enum.
+        this.rDataClass = DNSRRClassEnum.fromCode(classCode);
 
         counter += 2; // Skip the class.
 

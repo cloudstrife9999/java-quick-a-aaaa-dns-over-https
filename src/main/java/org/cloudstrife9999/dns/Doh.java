@@ -58,10 +58,11 @@ public class Doh {
         List<String> answers = new ArrayList<>();
 
         for(DNSAnswer answer: message.getAnswers()) {
-            if(type.equals(answer.getrDataType()) && DNSQuestionQTypeEnum.A.equals(type)) {
+
+            if(type.refersToAnAQuery() && answer.getrDataType().refersToAnAResponse()){
                 answers.add(answer.getRDataAsIPv4());
             }
-            else if(type.equals(answer.getrDataType()) && DNSQuestionQTypeEnum.AAAA.equals(type)) {
+            else if(type.refersToAnAAAAQuery() && answer.getrDataType().refersToAnAAAAResponse()) {
                 answers.add(answer.getRDataAsIPv6());
             }
         }

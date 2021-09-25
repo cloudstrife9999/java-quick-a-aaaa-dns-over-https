@@ -5,6 +5,7 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 
 import org.cloudstrife9999.dns.header.DNSHeaderAAEnum;
+import org.cloudstrife9999.dns.header.DNSHeaderFlags;
 import org.cloudstrife9999.dns.header.DNSHeaderOpcodeEnum;
 import org.cloudstrife9999.dns.header.DNSHeaderQREnum;
 import org.cloudstrife9999.dns.header.DNSHeaderRAEnum;
@@ -14,29 +15,16 @@ import org.cloudstrife9999.dns.header.DNSHeaderTCEnum;
 
 public class DNSHeader implements DNSMessageElement {
     public static final int HEADER_LENGTH = 12;
-    private byte[] binaryRepresentation;
+    private byte[] binaryRepresentation; // 12 bytes.
     private byte[] transactionID; // 2 bytes; must be unpredictable.
-    private DNSHeaderQREnum qr;
-    private DNSHeaderOpcodeEnum opcode;
-    private DNSHeaderAAEnum aa;
-    private DNSHeaderTCEnum tc;
-    private DNSHeaderRDEnum rd;
-    private DNSHeaderRAEnum ra;
-    private static final int Z = 0;
-    private DNSHeaderRCodeEnum rCode;
-    private int qdCount;
-    private int anCount;
-    private int nsCount;
-    private int arCount;
+    private DNSHeaderFlags headerFlags; // 2 bytes.
+    private int qdCount; // 2 bytes; unsigned.
+    private int anCount; // 2 bytes; unsigned.
+    private int nsCount; // 2 bytes; unsigned.
+    private int arCount; // 2 bytes; unsigned.
 
-    public DNSHeader(DNSHeaderQREnum qr, DNSHeaderOpcodeEnum opcode, DNSHeaderAAEnum aa, DNSHeaderTCEnum tc, DNSHeaderRDEnum rd, DNSHeaderRAEnum ra, DNSHeaderRCodeEnum rCode, short qdCount, short anCount, short nsCount, short arCount) {
-        this.qr = qr;
-        this.opcode = opcode;
-        this.aa = aa;
-        this.tc = tc;
-        this.rd = rd;
-        this.ra = ra;
-        this.rCode = rCode;
+    public DNSHeader(DNSHeaderFlags flags, int qdCount, int anCount, int nsCount, int arCount) {
+        this.headerFlags = flags;
         this.qdCount = qdCount;
         this.anCount = anCount;
         this.nsCount = nsCount;
@@ -49,16 +37,17 @@ public class DNSHeader implements DNSMessageElement {
     }
 
     public static DNSHeader quickHeaderForQuery() {
-        return new DNSHeader(
+        DNSHeaderFlags flags = new DNSHeaderFlags(
             DNSHeaderQREnum.QUERY,
             DNSHeaderOpcodeEnum.QUERY,
             DNSHeaderAAEnum.NOT_AUTHORITY,
-            DNSHeaderTCEnum.NOT_TRUNCATED, // TODO: this is to be determined.
+            DNSHeaderTCEnum.NOT_TRUNCATED,
             DNSHeaderRDEnum.RECURSION_DESIRED,
             DNSHeaderRAEnum.RECURSION_NOT_AVAILABLE,
-            DNSHeaderRCodeEnum.NO_ERROR,
-            (short) 1, (short) 0, (short) 0, (short) 0
+            DNSHeaderRCodeEnum.NO_ERROR
         );
+
+        return new DNSHeader(flags, 1, 0, 0, 0);
     }
 
     public byte[] getTransactionID() {
@@ -97,7 +86,7 @@ public class DNSHeader implements DNSMessageElement {
 
         byte[] flags = Arrays.copyOfRange(this.binaryRepresentation, counter, counter + 2);
         counter +=2;
-        this.unpackFlags(flags);
+        this.headerFlags = new DNSHeaderFlags(flags);
 
         this.qdCount = Utils.twoBytesToUnsignedInt(Arrays.copyOfRange(this.binaryRepresentation, counter, counter + 2));
         counter += 2;
@@ -118,7 +107,7 @@ public class DNSHeader implements DNSMessageElement {
     public void updateBinaryRepresentation() {
         this.transactionID = this.generateFreshTransactionID();
 
-        byte[] flags = this.getFlagsBytes();
+        byte[] flags = this.headerFlags.getFlagsBytes();
         byte[] qdCountBytes = new byte[]{(byte)((this.qdCount >> 8) & 0xFF), (byte)(this.qdCount & 0xFF)};
         byte[] anCountBytes = new byte[]{(byte)((this.anCount >> 8) & 0xFF), (byte)(this.anCount & 0xFF)};
         byte[] nsCountBytes = new byte[]{(byte)((this.nsCount >> 8) & 0xFF), (byte)(this.nsCount & 0xFF)};
@@ -158,24 +147,5 @@ public class DNSHeader implements DNSMessageElement {
         random.nextBytes(newTransactionID);
 
         return newTransactionID;
-    }
-
-    private byte[] getFlagsBytes() {
-        byte[] flags = new byte[2];
-
-        flags[0] = (byte)((this.qr.getMaskedCode() + this.opcode.getMaskedCode() + this.aa.getMaskedCode() + this.tc.getMaskedCode() + this.rd.getMaskedCode()) & 0xFF);
-        flags[1] = (byte)((this.ra.getMaskedCode() + ((DNSHeader.Z << 4) & 0x70) + this.rCode.getMaskedCode()) & 0xFF);
-
-        return flags;
-    }
-
-    private void unpackFlags(byte[] flags) {
-        this.qr = DNSHeaderQREnum.fromCode((flags[0] >> 7) & 0x01);
-        this.opcode = DNSHeaderOpcodeEnum.fromCode(((flags[0] << 1) >> 4) & 0x0F);
-        this.aa = DNSHeaderAAEnum.fromCode(((flags[0] << 5) >> 7) & 0x01);
-        this.tc = DNSHeaderTCEnum.fromCode(((flags[0] << 6) >> 7) & 0x01);
-        this.rd = DNSHeaderRDEnum.fromCode(((flags[0] << 7) >> 7) & 0x01);
-        this.ra = DNSHeaderRAEnum.fromCode((flags[1] >> 7) & 0x01);
-        this.rCode = DNSHeaderRCodeEnum.fromCode(((flags[1] << 4) >> 4) & 0x0F);
     }
 }
