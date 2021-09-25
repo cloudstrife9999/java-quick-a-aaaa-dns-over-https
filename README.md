@@ -12,7 +12,7 @@ List<String> ipv4Results = client.resIPv4(domainName);
 List<String> ipv6Results = client.resIPv6(domainName);
 ```
 
-## Getting a HttpsUrlConnection (DNS-over-HTTPS is used to resolve the domain name)
+## Getting a HttpsURLConnection (DNS-over-HTTPS is used to resolve the domain name)
 
 ```java
 // If omitted or true, an AAAA DNS request is sent first, and the first returned IPv6 is used.
