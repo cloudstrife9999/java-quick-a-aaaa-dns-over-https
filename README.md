@@ -2,7 +2,7 @@
 
 ## Description
 
-Quick Java library to perform A and AAAA DNS queries over HTTPS to 1.1.1.1, and get a HttpsURLConnection or a SSLSocket where the domain name of the server is indicated via SNI (and the hostname is the resolved ip address).
+Quick Java library to perform A and AAAA DNS queries over HTTPS to 1.1.1.1, and get a HttpsURLConnection or an SSLSocket where the domain name of the server is indicated via SNI (and the hostname is the resolved ip address).
 
 ## Usage for quick DNS-over-HTTPS queries only
 
