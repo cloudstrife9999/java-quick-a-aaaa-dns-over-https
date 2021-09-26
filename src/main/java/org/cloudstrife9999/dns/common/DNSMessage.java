@@ -1,4 +1,4 @@
-package org.cloudstrife9999.dns;
+package org.cloudstrife9999.dns.common;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -7,6 +7,9 @@ import java.util.List;
 
 import org.cloudstrife9999.dns.question.DNSQuestionQClassEnum;
 import org.cloudstrife9999.dns.question.DNSQuestionQTypeEnum;
+import org.cloudstrife9999.dns.record.DNSAdditional;
+import org.cloudstrife9999.dns.record.DNSAnswer;
+import org.cloudstrife9999.dns.record.DNSAuthority;
 import org.cloudstrife9999.dns.record.DNSRecordEnum;
 
 public class DNSMessage {

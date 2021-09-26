@@ -2,7 +2,7 @@ package org.cloudstrife9999.dns.question;
 
 import java.util.stream.Stream;
 
-import org.cloudstrife9999.dns.Utils;
+import org.cloudstrife9999.dns.common.Utils;
 
 public enum DNSQuestionQClassEnum {
     IN(1),

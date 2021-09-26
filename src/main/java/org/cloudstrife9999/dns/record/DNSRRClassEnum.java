@@ -2,7 +2,7 @@ package org.cloudstrife9999.dns.record;
 
 import java.util.stream.Stream;
 
-import org.cloudstrife9999.dns.Utils;
+import org.cloudstrife9999.dns.common.Utils;
 
 public enum DNSRRClassEnum {
     IN(1),

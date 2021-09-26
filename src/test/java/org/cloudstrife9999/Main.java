@@ -4,12 +4,12 @@ import java.io.IOException;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import org.cloudstrife9999.connection.HttpsConnectionWithDoH;
+import org.cloudstrife9999.connection.HttpsConnectionWithDoHAndSNI;
 
 public class Main {
     public static void main(String[] args) {
         try {
-            HttpsURLConnection connection = HttpsConnectionWithDoH.connectAfterResolvingViaDoH("www.google.com", "maps", false);
+            HttpsURLConnection connection = HttpsConnectionWithDoHAndSNI.connectAfterResolvingViaDoH("www.google.com", "maps", false);
 
             connection.setDoOutput(true);
             connection.setRequestMethod("GET");

@@ -1,4 +1,4 @@
-package org.cloudstrife9999.dns;
+package org.cloudstrife9999.dns.common;
 
 import java.nio.ByteBuffer;
 import java.security.SecureRandom;

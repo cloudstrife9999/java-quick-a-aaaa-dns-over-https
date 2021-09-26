@@ -10,20 +10,23 @@ import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import org.cloudstrife9999.dns.common.DNSMessage;
+import org.cloudstrife9999.dns.common.Utils;
 import org.cloudstrife9999.dns.question.DNSQuestionQTypeEnum;
+import org.cloudstrife9999.dns.record.DNSAnswer;
 
-public class Doh {
+public class DNSOverHTTPSResolver {
     private static final String RESOLVER_IP = "1.1.1.1";
     private static final String RESOLVER_RESOURCE = "dns-query";
     private static final String GET_VARIABLE = "dns";
 
-    public List<String> resIPv4(String toResolve) throws IOException {
+    public List<String> resolveToIPv4(String toResolve) throws IOException {
         DNSMessage queryMessage = DNSMessage.quickIPv4QueryMessage(toResolve);
 
         return this.doQuery(queryMessage.getBytes(), queryMessage.getHeader().getTransactionID(), queryMessage.getQuestions().get(0).getQType().getCodeBytes());
     }
 
-    public List<String> resIPv6(String toResolve) throws IOException {
+    public List<String> resolveToIPv6(String toResolve) throws IOException {
         DNSMessage queryMessage = DNSMessage.quickIPv6QueryMessage(toResolve);
 
         return this.doQuery(queryMessage.getBytes(), queryMessage.getHeader().getTransactionID(), queryMessage.getQuestions().get(0).getQType().getCodeBytes());
@@ -74,11 +77,11 @@ public class Doh {
         try {
             StringBuilder builder = new StringBuilder();
             builder.append("https://");
-            builder.append(Doh.RESOLVER_IP);
+            builder.append(DNSOverHTTPSResolver.RESOLVER_IP);
             builder.append("/");
-            builder.append(Doh.RESOLVER_RESOURCE);
+            builder.append(DNSOverHTTPSResolver.RESOLVER_RESOURCE);
             builder.append("?");
-            builder.append(Doh.GET_VARIABLE);
+            builder.append(DNSOverHTTPSResolver.GET_VARIABLE);
             builder.append("=");
             builder.append(Base64.getUrlEncoder().withoutPadding().encodeToString(data));
 

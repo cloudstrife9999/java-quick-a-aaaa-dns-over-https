@@ -1,4 +1,6 @@
-package org.cloudstrife9999.dns;
+package org.cloudstrife9999.dns.record;
+
+import org.cloudstrife9999.dns.common.DNSResourceRecord;
 
 public class DNSAuthority extends DNSResourceRecord {
 
