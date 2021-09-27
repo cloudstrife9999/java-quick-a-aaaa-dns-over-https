@@ -13,25 +13,37 @@ public class HttpsConnectionWithDoHAndSNI {
     private HttpsConnectionWithDoHAndSNI() {}
 
     public static HttpsURLConnection connectAfterResolvingViaDoH(String domainName, String subresource) throws IOException {
-        return HttpsConnectionWithDoHAndSNI.connectAfterResolvingViaDoH(domainName, 443, subresource, true); // Using IPv6 by default, if available.
+        return HttpsConnectionWithDoHAndSNI.connectAfterResolvingViaDoH(domainName, 443, subresource, null, true); // Using IPv6 by default, if available.
+    }
+
+    public static HttpsURLConnection connectAfterResolvingViaDoH(String domainName, String subresource, String customUserAgent) throws IOException {
+        return HttpsConnectionWithDoHAndSNI.connectAfterResolvingViaDoH(domainName, 443, subresource, customUserAgent, true); // Using IPv6 by default, if available.
     }
 
     public static HttpsURLConnection connectAfterResolvingViaDoH(String domainName, String subresource, boolean preferIPv6IfAvailable) throws IOException {
-        return HttpsConnectionWithDoHAndSNI.connectAfterResolvingViaDoH(domainName, 443, subresource, preferIPv6IfAvailable);
+        return HttpsConnectionWithDoHAndSNI.connectAfterResolvingViaDoH(domainName, 443, subresource, null, preferIPv6IfAvailable);
+    }
+
+    public static HttpsURLConnection connectAfterResolvingViaDoH(String domainName, String subresource, String customUserAgent, boolean preferIPv6IfAvailable) throws IOException {
+        return HttpsConnectionWithDoHAndSNI.connectAfterResolvingViaDoH(domainName, 443, subresource, customUserAgent, preferIPv6IfAvailable);
     }
 
     public static HttpsURLConnection connectAfterResolvingViaDoH(String domainName, int port, String subresource) throws IOException {
-        return HttpsConnectionWithDoHAndSNI.connectAfterResolvingViaDoH(domainName, port, subresource, true); // Using IPv6 by default, if available.
+        return HttpsConnectionWithDoHAndSNI.connectAfterResolvingViaDoH(domainName, port, subresource, null, true); // Using IPv6 by default, if available.
     }
 
-    public static HttpsURLConnection connectAfterResolvingViaDoH(String domainName, int port, String subresource, boolean preferIPv6IfAvailable) throws IOException {
-        DNSOverHTTPSResolver client = new DNSOverHTTPSResolver();
+    public static HttpsURLConnection connectAfterResolvingViaDoH(String domainName, int port, String subresource, String customUserAgent) throws IOException {
+        return HttpsConnectionWithDoHAndSNI.connectAfterResolvingViaDoH(domainName, port, subresource, customUserAgent, true); // Using IPv6 by default, if available.
+    }
+
+    public static HttpsURLConnection connectAfterResolvingViaDoH(String domainName, int port, String subresource, String customUserAgent, boolean preferIPv6IfAvailable) throws IOException {
+        DNSOverHTTPSResolver client = (customUserAgent == null || "".equals(customUserAgent)) ?  new DNSOverHTTPSResolver() : new DNSOverHTTPSResolver(customUserAgent);
 
         if(preferIPv6IfAvailable) {
             List<String> results = client.resolveToIPv6(domainName);
 
             if(results.isEmpty()) {
-                return HttpsConnectionWithDoHAndSNI.connectAfterResolvingViaDoH(domainName, port, subresource, false);
+                return HttpsConnectionWithDoHAndSNI.connectAfterResolvingViaDoH(domainName, port, subresource, customUserAgent, false);
             }
             else {
                 return HttpsConnectionWithDoHAndSNI.openConnection(results.get(0), domainName, port, subresource);

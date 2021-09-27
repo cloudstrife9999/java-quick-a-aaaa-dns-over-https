@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -19,6 +20,23 @@ public class DNSOverHTTPSResolver {
     private static final String RESOLVER_IP = "1.1.1.1";
     private static final String RESOLVER_RESOURCE = "dns-query";
     private static final String GET_VARIABLE = "dns";
+    private String userAgent;
+    private String accept;
+    private String method;
+
+    public DNSOverHTTPSResolver(){
+        this("Java Client");
+    }
+
+    public DNSOverHTTPSResolver(String customUA){
+        if(customUA == null || "".equals(customUA)) {
+            throw new IllegalArgumentException("A null or empty User-Agent string was provided");
+        }
+
+        this.userAgent = customUA;
+        this.accept = "application/dns-message";
+        this.method = "GET";
+    }
 
     public List<String> resolveToIPv4(String toResolve) throws IOException {
         DNSMessage queryMessage = DNSMessage.quickIPv4QueryMessage(toResolve);
@@ -37,9 +55,9 @@ public class DNSOverHTTPSResolver {
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
         connection.setDoOutput(true);
-        connection.setRequestMethod("GET");
-        connection.setRequestProperty("User-Agent", "Java Client");
-        connection.setRequestProperty("Accept", "application/dns-message");
+        connection.setRequestMethod(this.method);
+        connection.setRequestProperty("User-Agent", this.userAgent);
+        connection.setRequestProperty("Accept", this.accept);
 
         byte[] responseBytes = new byte[connection.getInputStream().available()];
         
@@ -51,7 +69,7 @@ public class DNSOverHTTPSResolver {
             return parseResponseMessage(message, qType);
         }
         else {
-            return Arrays.asList("No data returned");
+            return Collections.emptyList();
         }
     }
 

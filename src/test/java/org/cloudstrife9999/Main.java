@@ -9,11 +9,13 @@ import org.cloudstrife9999.connection.HttpsConnectionWithDoHAndSNI;
 public class Main {
     public static void main(String[] args) {
         try {
-            HttpsURLConnection connection = HttpsConnectionWithDoHAndSNI.connectAfterResolvingViaDoH("www.google.com", "maps", false);
+            String customUserAgent = "My Custom User-Agent";
+
+            HttpsURLConnection connection = HttpsConnectionWithDoHAndSNI.connectAfterResolvingViaDoH("www.google.com", "maps", customUserAgent, false);
 
             connection.setDoOutput(true);
             connection.setRequestMethod("GET");
-            connection.setRequestProperty("User-Agent", "Java Client");
+            connection.setRequestProperty("User-Agent", customUserAgent);
 
             byte[] result = new byte[connection.getInputStream().available()];
             connection.getInputStream().read(result);
